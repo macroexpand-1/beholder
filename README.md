@@ -31,10 +31,21 @@ It covers why light mode is an optics result rather than a preference, why the b
 | `pupil.lisp` | Pupil diameter and retinal blur per background luminance. |
 | `lca.lisp` | Longitudinal chromatic aberration per wavelength. |
 | `tradeoff.lisp` | Maximum chroma a background can carry at a given contrast floor. |
-| `colorlib.lisp` | Shared color math. `load`ed by `solve-palette.lisp` and `tradeoff.lisp`; not runnable alone. |
 
 Common Lisp, no dependencies beyond SBCL (already in the `Brewfile`); each script carries a `#!/usr/bin/env -S sbcl --script` shebang and runs in place.
-`colorlib.lisp` carries the sRGB transfer function, WCAG contrast, CIELAB, and the Viénot/Brettel/Mollon dichromat simulation.
+`solve-palette.lisp` and `tradeoff.lisp` load the `beholder` system (`beholder.asd`) with the ASDF that ships in SBCL.
+
+## The Library
+
+The scripts are thin drivers over three layers in `src/`, each taking values and returning values, with no printing and no exiting:
+
+| File | Layer |
+|---|---|
+| `src/color.lisp` | The `color` value (`hex`, `hsl`, `color-hex`), WCAG contrast, CIELAB, chroma, and the observers (`+normal+`, `+protan+`, `+deutan+`, from the Viénot/Brettel/Mollon dichromat simulation) that `worst-contrast`, `profile` and `separation` take as `:observers`. |
+| `src/assess.lisp` | `assess`: a background, named colors and a `policy` in, a `report` out (contrast per observer, chroma, L\*, the weakest pair, any pairs short of their targets). |
+| `src/solve.lisp` | `solve`: a `problem` (background, slots, fixed colors, targets, ceiling, grid, restarts) in, a `result` out. A slot with no candidate signals `infeasible-slot`, naming the constraint that emptied it. |
+
+The tests use fiveam (from Quicklisp) and run with `(asdf:test-system "beholder")`; the library itself needs nothing beyond SBCL.
 
 ## Two Things That Are Easy to Get Wrong
 

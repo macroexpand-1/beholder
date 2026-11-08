@@ -1,11 +1,15 @@
 #!/usr/bin/env -S sbcl --script
+;;;; pupil.lisp: how blurry text gets on bright vs dark backgrounds.
 ;;;;
-;;;; pupil.lisp
+;;;; A brighter screen makes your pupil smaller, and a smaller pupil blurs
+;;;; less (the same reason a camera gets sharper when you stop it down). This
+;;;; estimates pupil size for a few backgrounds, and how much blur that means
+;;;; for someone whose eyes are slightly out of focus.
 
 
-(defparameter *peak* 150)               ; typical laptop/desktop SDR white, cd/m^2
-(defparameter *area* (* 30 18))         ; ~27" display at 24 inches, deg^2
-(defparameter *defocus* 0.50d0)         ; residual defocus in diopters
+(defparameter *peak* 150)               ; how bright white is on a normal screen, cd/m^2
+(defparameter *area* (* 30 18))         ; how much of your view a 27" screen fills at 24", deg^2
+(defparameter *defocus* 0.50d0)         ; how far out of focus the eye is, in diopters
 (defparameter *pi* 3.14159265d0)
 
 (defparameter +themes+
@@ -16,13 +20,13 @@
     ("#ffffff" "plain white")))
 
 
-;; sRGB gamma decode with one channel
+;; A hex channel (0 to 1) as linear light.
 (defun lin (channel)
   (if (<= channel 0.03928d0)
       (/ channel 12.92d0)
       (expt (/ (+ channel 0.055d0) 1.055d0) 2.4d0)))
 
-;; Relative luminance (0..1) of a "#rrggbb" string
+;; How bright a "#rrggbb" color is, from 0 (black) to 1 (white).
 (defun relative-luminance (hex)
   (destructuring-bind (r g b)
       (let ((s (string-left-trim "#" hex)))
@@ -33,7 +37,8 @@
        (* 0.7152d0 (lin g))
        (* 0.0722d0 (lin b)))))
 
-;; Pupil diameter. Stanley & Davies (1995) pupil, unified later by Watson & Yellott (2012).
+;; Pupil size in mm for a given brightness and screen size. The formula is
+;; from Stanley & Davies (1995), as used by Watson & Yellott (2012).
 (defun pupil-diameter-mm (luminance-cd-m2 field-area-deg2)
   (let ((x (expt (/ (* luminance-cd-m2 field-area-deg2) 846) 0.41d0)))
     (- 7.75d0 (* 5.75d0 (/ x (+ x 2))))))
@@ -46,8 +51,8 @@
       (let* ((rel-lum (relative-luminance hex))
              (cd-m2 (* rel-lum *peak*))
              (pupil (pupil-diameter-mm cd-m2 *area*))
-             ;; Geometric blur circle: angular diameter (radians) is pupil
-             ;; diameter (meters) * defocus (diopters); converted to arcminutes.
+             ;; How big the blur spot is: pupil size (in meters) times how far
+             ;; out of focus, which gives an angle. Then radians to arcminutes.
              (blur-rad (* (/ pupil 1000) *defocus*))
              (blur-arcmin (* blur-rad (* (/ 180 *pi*) 60))))
         (format t "~22A ~,3F  ~6,1F   ~5,2F    ~5,1F~%"

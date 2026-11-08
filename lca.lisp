@@ -1,10 +1,17 @@
 #!/usr/bin/env -S sbcl --script
-;;;; lca.lisp
+;;;; lca.lisp: which colors the eye can't focus sharply.
+;;;;
+;;;; The eye bends each wavelength of light a little differently, so it can't
+;;;; focus every color at once. It focuses yellow-green best. This prints how
+;;;; far out of focus each other color is, in diopters. Blues come out worst,
+;;;; which is why blue text gets a little extra contrast in the themes.
 
 
+;; How strongly the eye bends light of a given wavelength (in nm).
 (defun refractive-power (nm)
   (- 1.68524d0 (/ 633.46d0 (- nm 214.102d0))))
 
+;; Yellow-green, the color the eye focuses best.
 (defparameter +reference-nm+ 555)
 (defparameter *reference* (refractive-power +reference-nm+))
 
