@@ -1,0 +1,476 @@
+<!-- Self-contained on purpose: the house stylesheet is EMBEDDED, not linked.
+     This page is opened from Finder (file://), and browsers refuse to load an
+     external stylesheet subresource over file://, so a linked version renders
+     unstyled when double-clicked. Hand-written HTML: to restyle, paste the
+     current web/house-light.css over the <style> block below (keeping the
+     page-specific rules at its end). -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solving a terminal palette for one pair of eyes</title>
+<style>
+/* ============================================================================
+   house-light.css — the LIGHT house style for local HTML docs across every repo.
+   Dark counterpart: house-dark.css. These two files are the SAME stylesheet:
+   every rule below the palette is var-driven, so they differ ONLY in the
+   palette block. If you edit a rule in one, make the identical edit in the
+   other — bin/dotfiles-doctor checks their selector sets stay in sync.
+
+   EMBED it inline so each page is self-contained:
+
+       pandoc --standalone --embed-resources --css=.../house-light.css  (pandoc >= 3.1.7)
+       — or, for hand-written HTML, paste this file into a <style> block.
+
+   Do NOT link it as an external stylesheet for docs meant to be opened from
+   Finder:
+
+       <link rel="stylesheet" href="file:///path/to/dotfiles/web/house-light.css">
+
+   That works when the page is served over http://, but browsers refuse to load
+   an external stylesheet subresource over file:// — so a doc opened by
+   double-clicking renders as raw, unstyled HTML. Inlining avoids the trap.
+
+   Deliberately NOT a white page: --bg is warm paper (#f4efe3), which scatters
+   less and cuts glare more than a neutral gray, and gives the cool Tokyonight
+   accents more separation. The accents are Tokyonight hues re-solved against
+   that warm field so all of them clear WCAG AA at body size. Body text is a
+   warm near-black.
+
+   Like house-dark.css this is a SUPERSET of the dotfiles cheatsheets, so a
+   sheet can drop its inline <style> and embed this instead.
+   ============================================================================ */
+
+:root {
+  /* Warm paper, not blue-gray: a warm field scatters less and cuts glare more
+     than a neutral one, and it gives the cool Tokyonight accents more
+     separation. Each accent was solved to >=4.6:1 against --bg while holding
+     its hue, so every one clears WCAG AA for BODY text, not just large text —
+     stock Tokyonight Day sits at 3.1-4.3:1 and is too weak to read comfortably.
+     Re-solve (don't eyeball) if you change --bg. */
+  --bg:#f4efe3; --panel:#e8e0cd; --fg:#3a3630; --dim:#5c6484;
+  --accent:#1767d6; --accent2:#8a47d7; --key:#8f5e15; --line:#cfc5ae;
+  --good:#4b772b; --warn:#c13951;
+  --codebg:#e8e0cd;
+  --strong:#1f1d19;     /* headings, <b>, <th> — 14.7:1 on --bg, and kept a
+                           clear step darker than --fg so headings read as
+                           emphasis rather than just more body text          */
+  --inlinebg:#e8e0cd;   /* inline-code chip                                  */
+  --inlinefg:#3a3630;
+  --kbdline:#cfc5ae;    /* kbd border                                        */
+  --on-accent:#ffffff;  /* text sitting ON an --accent fill (step bullets)   */
+  --uline:rgba(23,103,214,.42);     /* link underline                        */
+  --quotebg:rgba(23,103,214,.07);   /* blockquote wash                       */
+  --rowalt:rgba(207,197,174,.35);   /* zebra-striped table rows              */
+}
+* { box-sizing:border-box; }
+
+body {
+  margin:0; padding:2rem 1.25rem 4rem;
+  background:var(--bg); color:var(--fg);
+  font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+}
+
+.wrap { max-width:820px; margin:0 auto; }
+
+/* ---- headings: document scale (palette kept; not the cheatsheet micro-h2) -- */
+
+h1 { font-size:1.7rem; line-height:1.25; margin:0 0 .6rem; color:var(--strong); font-weight:700; }
+h1 .sub { color:var(--accent); font-weight:600; }   /* cheatsheet subtitle span */
+
+h2 {
+  font-size:1.28rem; color:var(--accent2); font-weight:650;
+  margin:2.4rem 0 .9rem; padding-bottom:.3rem; border-bottom:1px solid var(--line);
+}
+h3 { font-size:1.06rem; color:var(--accent); font-weight:650; margin:1.8rem 0 .6rem; }
+h4 { font-size:.95rem;  color:var(--fg);     font-weight:700; margin:1.4rem 0 .5rem; }
+h5, h6 { font-size:.9rem; color:var(--dim); font-weight:700; text-transform:uppercase;
+         letter-spacing:.06em; margin:1.2rem 0 .4rem; }
+
+p { margin:.7rem 0; }
+.lede { color:var(--dim); margin:0 0 2rem; }   /* cheatsheet lede paragraph */
+
+/* ---- links ---------------------------------------------------------------- */
+
+a { color:var(--accent);
+    text-decoration:underline; text-decoration-color:var(--uline);
+    text-underline-offset:2px; }
+a:hover { text-decoration-color:var(--accent); }
+
+/* ---- inline code & kbd ---------------------------------------------------- */
+/* Inline code is intentionally NEUTRAL (a soft chip), not accent-blue, so it
+   is never mistaken for a link — these docs are dense with both. */
+
+code {
+  background:var(--inlinebg); color:var(--inlinefg);
+  border:1px solid var(--line);
+  padding:.02rem .34rem; border-radius:4px;
+  font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+
+kbd {
+  display:inline-block; background:var(--codebg); color:var(--key);
+  border:1px solid var(--kbdline); border-bottom-width:2px; border-radius:5px;
+  padding:.05rem .42rem; font:600 12.5px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;
+  white-space:nowrap;
+}
+
+/* ---- code blocks ---------------------------------------------------------- */
+
+pre {
+  background:var(--panel); border:1px solid var(--line); border-radius:10px;
+  padding:.9rem 1.1rem; margin:1rem 0; overflow-x:auto; line-height:1.5;
+}
+pre code {
+  background:none; border:none; color:var(--fg); padding:0; border-radius:0;
+  font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+/* pandoc wraps highlighted blocks as <pre class="sourceCode"> */
+pre.sourceCode { padding:.9rem 1.1rem; }
+code.sourceCode { white-space:pre; }
+.sourceCode a.sourceLine { color:inherit; text-decoration:none; }
+
+/* ---- blockquotes ---------------------------------------------------------- */
+
+blockquote {
+  margin:1rem 0; padding:.4rem 1rem; color:var(--dim);
+  border-left:3px solid var(--accent); background:var(--quotebg);
+  border-radius:0 6px 6px 0;
+}
+blockquote p { margin:.4rem 0; }
+
+/* ---- lists ---------------------------------------------------------------- */
+
+ul, ol { margin:.7rem 0; padding-left:1.5rem; }
+li { margin:.3rem 0; }
+li > ul, li > ol { margin:.3rem 0; }
+
+/* GFM task lists */
+ul.task-list { list-style:none; padding-left:1.1rem; }
+li.task-list-item { margin:.3rem 0; }
+li.task-list-item input[type=checkbox] {
+  margin:0 .5rem 0 -.1rem; vertical-align:middle; accent-color:var(--good);
+}
+
+/* ---- tables --------------------------------------------------------------- */
+
+table { width:100%; border-collapse:collapse; margin:1.1rem 0; font-size:.94rem; }
+th, td {
+  text-align:left; padding:.5rem .7rem; border:1px solid var(--line);
+  vertical-align:top;
+}
+th { background:var(--panel); color:var(--strong); font-weight:650; }
+tr:nth-child(even) td { background:var(--rowalt); }
+
+/* ---- rules, emphasis ------------------------------------------------------ */
+
+hr { border:none; border-top:1px solid var(--line); margin:2rem 0; }
+strong, b { color:var(--strong); }
+em { color:var(--fg); }
+
+/* ---- cheatsheet components ------------------------------------------------ */
+/* The header above promises this file is a SUPERSET of the dotfiles cheatsheets
+   — that a sheet can drop its inline <style> and embed this with no visual
+   change. These blocks are what make that true; they were missing, so the claim
+   was false for .loop/.ns/.trouble/ol.steps/.prompt until they were added.
+   Copied verbatim from the 8-of-9 majority definition in cheatsheets/*.html.
+   Keep them in sync: if you restyle a component here, restyle it there too. */
+
+.loop { margin:1.1rem 0; }
+.loop table { width:100%; border-collapse:collapse; }
+.loop td { padding:.4rem .2rem; border-bottom:1px solid var(--line); vertical-align:top; }
+.loop td.k { white-space:nowrap; width:1%; padding-right:1.1rem; }
+.loop td.was { color:var(--dim); text-decoration:line-through; }
+.loop tr:last-child td { border-bottom:none; }
+
+.ns { background:var(--panel); border-left:3px solid var(--accent);
+      border-radius:0 6px 6px 0; padding:.7rem .9rem; margin:1.1rem 0; }
+.ns p { margin:.4rem 0; }
+.ns p:first-child { margin-top:0; }
+.ns p:last-child { margin-bottom:0; }
+
+.trouble table { width:100%; border-collapse:collapse; }
+.trouble td { padding:.4rem .2rem; border-bottom:1px solid var(--line); vertical-align:top; }
+.trouble td.sym { white-space:nowrap; width:1%; padding-right:1.1rem; color:var(--warn); }
+.trouble tr:last-child td { border-bottom:none; }
+
+.prompt { color:var(--accent); font-weight:600; }
+
+h2 .tag { color:var(--dim); text-transform:none; letter-spacing:0; font-weight:400; }
+.good { color:var(--good); }
+.warn { color:var(--warn); }
+
+ol.steps { list-style:none; counter-reset:step; padding:0; margin:1.1rem 0; }
+ol.steps > li { counter-increment:step; position:relative; padding-left:2.1rem;
+                margin:0 0 .9rem; }
+ol.steps > li::before {
+  content:counter(step); position:absolute; left:0; top:.05rem;
+  width:1.5rem; height:1.5rem; border-radius:50%; display:grid; place-items:center;
+  background:var(--accent); color:var(--on-accent); font-weight:700; font-size:.85rem;
+}
+ol.steps b { color:var(--strong); }
+ol.steps .sub2 { color:var(--dim); font-size:.86rem; margin-top:.3rem; }
+
+/* ---- footer --------------------------------------------------------------- */
+
+footer { color:var(--dim); font-size:.78rem; margin-top:3rem; padding-top:1rem;
+         border-top:1px solid var(--line); text-align:center; }
+
+/* ============================================================================
+   Syntax highlighting — pandoc / skylighting token classes, mapped to palette.
+   (Block colors live here so the one stylesheet owns all styling.)
+   ============================================================================ */
+
+/* Legacy hand-rolled tokens: croatoan-cheatsheet.html marks up its own code
+   blocks with single-letter classes instead of pandoc's. Kept so this file
+   really is a superset of every cheatsheet. Prefer the pandoc names below for
+   anything new — these exist only so the older sheet can embed this file. */
+pre code .c { color:var(--dim); font-style:italic; }               /* comment   */
+pre code .k { color:var(--key); }                                  /* keyword   */
+pre code .s { color:var(--good); }                                 /* string    */
+pre code .f { color:var(--accent2); font-weight:600; }             /* function  */
+
+code span.co { color:var(--dim); font-style:italic; }              /* comment   */
+code span.do { color:var(--dim); font-style:italic; }              /* doc       */
+code span.an { color:var(--dim); }                                 /* annotation*/
+code span.st, code span.ch, code span.vs, code span.ss { color:var(--good); }   /* strings */
+code span.kw, code span.cf { color:var(--accent2); font-weight:600; }           /* keyword / controlflow */
+code span.fu, code span.bu { color:var(--accent); }               /* function / builtin */
+code span.dv, code span.fl, code span.bn, code span.dt { color:var(--key); }    /* numbers / datatypes */
+code span.cn { color:var(--key); }                                 /* constant  */
+code span.op { color:var(--accent); }                              /* operator  */
+code span.va { color:var(--fg); }                                  /* variable  */
+code span.at { color:var(--accent2); }                             /* attribute */
+code span.pp { color:var(--warn); }                                /* preprocessor */
+code span.er { color:var(--warn); font-weight:600; }               /* error     */
+code span.wa { color:var(--warn); }                                /* warning   */
+
+/* Body text larger than the sheet default (15/13): this is read, not skimmed,
+   and the whole point of the exercise is legibility. */
+body { font-size: 17px; line-height: 1.65; }
+code, pre { font-size: 15px;
+  font-family: "RecMonoCasual Nerd Font Mono",ui-monospace,SFMono-Regular,Menlo,monospace; }
+.lede { font-size: 19px; color: var(--strong); }
+table { font-size: 16px; }
+</style>
+<h1>Solving a terminal palette for one pair of eyes</h1>
+
+<p class="lede">This is the reasoning behind the light theme in this repo. The
+short version: none of the colors were chosen. They were solved, against four
+constraints that fight each other, and the interesting part is <em>how</em> they
+fight.</p>
+
+<h2>The constraints</h2>
+
+<table>
+<thead><tr><th>Condition</th><th>What it demands</th></tr></thead>
+<tbody>
+<tr><td>Myopia &minus;1.25 + astigmatism</td><td>Residual blur even when corrected. Blur scales with pupil size.</td></tr>
+<tr><td>Presbyopia (reading add)</td><td>Less accommodation available; depth of focus matters more.</td></tr>
+<tr><td>Red/green color vision deficiency</td><td>The hue circle collapses to one axis. Half of normal color coding is unavailable.</td></tr>
+<tr><td>Long working hours</td><td>Glare and absolute luminance are real costs, not aesthetics.</td></tr>
+</tbody>
+</table>
+
+<h2>1. Why light, in diopters</h2>
+
+<p>The usual dark-vs-light argument is taste. This one isn't. Pupil diameter is
+driven by field luminance, and geometric blur from residual defocus scales
+<strong>linearly</strong> with pupil diameter.</p>
+
+<p>Using the Stanley &amp; Davies (1995) pupil model as unified by Watson &amp;
+Yellott (2012), at a 150-nit display white over a ~30&deg;&times;18&deg; field:</p>
+
+<table>
+<thead><tr><th>Field</th><th>cd/m&sup2;</th><th>Pupil</th><th>Blur @ 0.50 D</th></tr></thead>
+<tbody>
+<tr><td>TokyoNight Storm <code>#24283b</code></td><td>3.3</td><td>5.42 mm</td><td>9.3 arcmin</td></tr>
+<tr><td>Warm paper <code>#f2e9d8</code></td><td>123.2</td><td>3.44 mm</td><td><strong>5.9 arcmin</strong></td></tr>
+</tbody>
+</table>
+
+<p>A 37% reduction in retinal blur from the same uncorrected error, and the
+astigmatic blur ellipse shrinks by the same factor. This is the one change that
+helps defocus, astigmatism and presbyopia <em>simultaneously</em>. It also
+retires the halation workaround the dark theme needed: dark-on-light
+spreads dark into light, which does not bloom.</p>
+
+<h2>2. Why not white</h2>
+
+<p>Pure white constricts the pupil to 3.35 mm (only <strong>0.09 mm</strong>
+past the warm paper) while raising field luminance <strong>22%</strong>.
+Essentially all of the optical benefit is already captured at L* 92.6. The rest
+is glare you'd be paying for nothing.</p>
+
+<h2>3. Why warm</h2>
+
+<p>The eye is not corrected for chromatic aberration. Thibos' chromatic-eye
+model (1992) gives the defocus of each wavelength relative to 555 nm:</p>
+
+<table>
+<thead><tr><th>Wavelength</th><th>Defocus vs 555 nm</th></tr></thead>
+<tbody>
+<tr><td>450 nm (deep blue)</td><td>&minus;0.83 D</td></tr>
+<tr><td>490 nm (cyan)</td><td>&minus;0.44 D</td></tr>
+<tr><td>610 nm (red)</td><td>+0.26 D</td></tr>
+</tbody>
+</table>
+
+<p>Blue is roughly <strong>three times further out of focus than red</strong>,
+and the total spread across the visible band is over a diopter; you
+cannot focus both ends at once. Weighting the background long makes it the
+best-focused thing on screen. It also has two knock-on rules: never put body
+text in saturated blue, and where blue must be used, give it extra
+<em>luminance</em> contrast, since the chromatic edge arrives blurred and only
+the luminance edge survives.</p>
+
+<h2>4. The colorblind constraint, and one correction most tools miss</h2>
+
+<p>Candidate colors are run through the Vi&eacute;not, Brettel &amp; Mollon
+(1999) dichromat simulation and scored on their <em>worst-case</em> separation
+across normal, protanope and deuteranope vision. Taking the minimum rather than
+the mean is the whole point: a pair only counts as distinguishable if it
+survives every way of seeing it.</p>
+
+<blockquote>
+<p><strong>WCAG overstates reds.</strong> The contrast formula's luminance
+coefficients encode a <em>normal</em> observer's luminous efficiency. A
+saturated red that measures 4.5:1 reads substantially darker to a protanope.
+Every color here is checked against all three observers, not just the default
+one, which is why some reds ended up darker than the naive calculation
+would require.</p>
+</blockquote>
+
+<p>The structural consequence is severe and worth stating plainly: under
+dichromacy the hue circle collapses onto a single blue&ndash;yellow line. Six
+syntax categories are therefore competing for room along <em>one axis plus
+lightness</em>. Some faces must differ by lightness alone. That is forced by the
+mathematics, not a failure of the palette.</p>
+
+<h2>5. The finding that changed the design</h2>
+
+<p>On a light background you cannot maximize contrast and colorfulness at once:
+sRGB's most chromatic colors sit at middle lightness, and demanding contrast
+drags you away from there. Measuring the average maximum CIELAB chroma
+achievable over 24 hues:</p>
+
+<table>
+<thead><tr><th>Background</th><th>at AA 4.5:1</th><th>at 7:1</th></tr></thead>
+<tbody>
+<tr><td>Dark <code>#24283b</code></td><td><strong>82.3</strong></td><td>46.3</td></tr>
+<tr><td>Warm paper <code>#f2e9d8</code></td><td>72.8</td><td><strong>60.4</strong></td></tr>
+<tr><td>White</td><td>77.5</td><td>66.0</td></tr>
+</tbody>
+</table>
+
+<p>The intuition that dark backgrounds carry bolder color is <strong>correct at
+AA</strong>, and it <strong>inverts at high contrast</strong>. At 7:1 the
+paper carries 30% more chroma than the dark field, because bright saturated
+colors simply are not bright enough to hold contrast against black. At the
+contrast these eyes need, light is the better substrate for vivid color.</p>
+
+<p>Two practical consequences. Lightening the paper is <em>not</em> a useful
+lever: going all the way to white buys ~6% chroma for 22% more glare. The
+contrast floor is the lever: dropping 7:1 to 4.5:1 buys 20% more chroma.</p>
+
+<h2>6. Two solving modes</h2>
+
+<p>The original mistake was maximizing contrast everywhere. Syntax keywords sat
+at <strong>11.06:1 against a 4.5 requirement</strong>: six wasted stops,
+paid for in color, which is exactly why the first light version read as
+uniformly dark and lifeless.</p>
+
+<ul>
+<li><strong>Read for minutes</strong> (body text, syntax) &rarr; solve for
+contrast, 4.5&ndash;11:1. Correctness first.</li>
+<li><strong>Glanced at</strong> (prompt, diffs, status) &rarr; solve for
+<em>chroma subject to a floor</em>. Everything above the floor is contrast you
+are not using; spend it as color.</li>
+</ul>
+
+<p>Re-solving this way roughly tripled the chroma on the prompt directory and
+quadrupled it on added diff lines, changing no ratio that mattered.</p>
+
+<h3>Hue assignment by token frequency</h3>
+
+<p>Because dichromacy flattens hue to one axis, the richest and most separable
+bands should go to the tokens you see most. Keywords therefore take
+<strong>violet</strong> rather than the customary amber, and types take the
+olive slot. Swapping those two was worth <strong>+302% chroma on keywords</strong>
+and moved the solution from 97% to 100% of its separation targets.</p>
+
+<p>Comments are a <em>neutral</em> gray, not a warm one: a warm comment and a
+green string both land on olive under deuteranope simulation, which had capped
+strings at +12% chroma. Neutralizing the comment freed the entire green band and
+strings gained +177%.</p>
+
+<h2>7. Mistakes, and what each one teaches</h2>
+
+<table>
+<thead><tr><th>Mistake</th><th>Symptom</th><th>Rule it produced</th></tr></thead>
+<tbody>
+<tr><td>Chose <code>doom-oksolar-light</code> for being "OKLab-derived and warm"</td><td>Every accent 2&ndash;4:1; its own fg 4.08:1</td><td>Warm and light &ne; high contrast. Measure a base theme's palette before adopting it.</td></tr>
+<tr><td>Inverted ANSI slot 0 to a near-background tone (the usual light-theme convention)</td><td>1.13:1; TUIs using color 0 for dim text rendered invisible</td><td>Every ANSI slot must be readable as a <em>foreground</em>. Cost: nothing may paint a colored background.</td></tr>
+<tr><td>Left git on xterm indices 39 and 208</td><td>Stayed at ~2:1 through every theme change</td><td>Ghostty remaps only 0&ndash;15. Indices 16&ndash;255 are a fixed cube; use literal hex.</td></tr>
+<tr><td>Assumed the terminal palette governed Claude Code and starship</td><td>Light-gray truecolor on paper</td><td>An app's own truecolor config bypasses the terminal entirely and needs its own light setting.</td></tr>
+<tr><td>Put TOML top-level keys after a <code>[table]</code> header</td><td>Prompt silently reverted to starship's defaults, with no error</td><td>Bare keys bind to the most recent table. Validate, don't eyeball.</td></tr>
+<tr><td>Optimized <em>mean</em> chroma across syntax faces</td><td>One face starved to near-black to feed the rest</td><td>Set per-slot chroma floors ranked by token frequency.</td></tr>
+</tbody>
+</table>
+
+<h2>8. The deployed palette</h2>
+
+<p>Background <code>#f2e9d8</code> (L* 92.6), ink <code>#2f2b25</code> (11.63:1).
+All values verified for normal, protanope and deuteranope observers.</p>
+
+<table>
+<thead><tr><th>Role</th><th>Hex</th><th>Contrast</th><th>C*</th></tr></thead>
+<tbody>
+<tr><td>syntax keyword (violet)</td><td><code>#8620d9</code></td><td>5.03:1</td><td>102.0</td></tr>
+<tr><td>syntax function (indigo)</td><td><code>#1b25e3</code></td><td>7.09:1</td><td>111.9</td></tr>
+<tr><td>syntax string (orange, hand-tuned)</td><td><code>#b33204</code></td><td>4.54:1</td><td>72.3</td></tr>
+<tr><td>syntax type (magenta, hand-tuned)</td><td><code>#a7037b</code></td><td>5.17:1</td><td>68.6</td></tr>
+<tr><td>syntax constant (red)</td><td><code>#780404</code></td><td>8.62:1</td><td>56.7</td></tr>
+<tr><td>syntax builtin (teal)</td><td><code>#045b80</code></td><td>5.69:1</td><td>28.4</td></tr>
+<tr><td>comment (neutral)</td><td><code>#6b6862</code></td><td>4.59:1</td><td>3.8</td></tr>
+<tr><td>git added</td><td><code>#0e4ad8</code></td><td>5.52:1</td><td>85.9</td></tr>
+<tr><td>git removed</td><td><code>#b11902</code></td><td>5.00:1</td><td>76.5</td></tr>
+<tr><td>prompt directory</td><td><code>#0e4ad8</code></td><td>5.52:1</td><td>85.9</td></tr>
+<tr><td>prompt branch</td><td><code>#925401</code></td><td>4.71:1</td><td>54.6</td></tr>
+<tr><td>prompt alert</td><td><code>#880a01</code></td><td>7.39:1</td><td>63.2</td></tr>
+<tr><td>prompt ok (teal)</td><td><code>#0165a7</code></td><td>4.66:1</td><td>42.2</td></tr>
+</tbody>
+</table>
+
+<p>String and type were re-tuned by eye on 2026-11-01, away from the solver's
+green (<code>#036831</code>) and olive (<code>#696406</code>); see
+<code>color/README.md</code>. Weakest syntax pair as deployed:
+<code>keyword</code>/<code>function</code> at 16.2 &Delta;E for the worst
+observer, which is the target <code>solve-palette.lisp syntax</code> now uses
+for that pair. <code>git added</code> vs <code>removed</code>: 120.9 &Delta;E; blue
+against warm rides the intact axis, so that pair survives completely.</p>
+
+<h2>9. Regenerating</h2>
+
+<pre><code>./color/solve-palette.lisp verify   # re-measure everything deployed
+./color/solve-palette.lisp syntax   # doom/config.el font-lock faces
+./color/solve-palette.lisp prompt   # starship [palettes.paper]
+./color/solve-palette.lisp diff     # git [color "diff"]
+
+./color/pupil.lisp                  # pupil size and retinal blur per field
+./color/lca.lisp                    # chromatic aberration per wavelength
+./color/tradeoff.lisp               # chroma available per background</code></pre>
+
+<p>Run <code>verify</code> after any palette edit; it exits non-zero if
+anything falls below AA for any of the three observers. The constraints
+interact, so nudging one hex by hand tends to break a pair somewhere else;
+change the constraints and re-solve instead.</p>
+
+<h2>Sources</h2>
+
+<ul>
+<li>Watson &amp; Yellott (2012), <em>A unified formula for light-adapted pupil size</em>, J. Vision 12(10):12.</li>
+<li>Stanley &amp; Davies (1995), <em>The effect of field of view size on steady-state pupil diameter</em>.</li>
+<li>Thibos, Ye, Zhang &amp; Bradley (1992), <em>The chromatic eye</em>, Applied Optics 31:3594.</li>
+<li>Vi&eacute;not, Brettel &amp; Mollon (1999), <em>Digital video colourmaps for checking the legibility of displays by dichromats</em>, Color Res. Appl. 24:243.</li>
+<li>WCAG 2.1 contrast-ratio definition (with the normal-observer caveat noted in &sect;4).</li>
+</ul>
+
