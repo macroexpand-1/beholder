@@ -45,7 +45,7 @@ Everything else (every request field and its default, the responses, exit codes,
 
 ## The Write-Up
 
-[writeup.html](writeup.html) is why the light example looks the way it does: why light mode is an optics result rather than a preference, why the background is warm and not white, the red/green constraint, and the contrast-versus-colorfulness tradeoff.
+[writeup.md](writeup.md) is why the light example looks the way it does: why light mode is an optics result rather than a preference, why the background is warm and not white, the red/green constraint, and the contrast-versus-colorfulness tradeoff.
 It renders when opened straight from the file system.
 `tradeoff.lisp`, `pupil.lisp` and `lca.lisp` are the calculations behind it.
 
