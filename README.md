@@ -1,17 +1,21 @@
 # beholder
 
-Check a color palette, or have one found for you.
+Beauty is in the eye of the beholder, and for colorblind people the world can be cruel.
+I'm colorblind and one thing that people don't realize is that the colorblind experience isn't monotone (ha! see what I did there?)
+Take red-green colorblindness: there's multiple types and they're totally at odds with each other.
+Many people don't realize that red blends into black for me, so writing with a red ink pen can look really similar to black.
 
-beholder measures contrast, how colorful each color is, and how far apart colors look.
-Hand it the colors you have and it tells you which ones hold up and which two look most alike.
-Or describe the colors you want ("a blue, at least 5.5:1, this far from the orange") and it searches for the most colorful set that meets every target.
+Beholder measures contrast, how colorful each color is, and how far apart colors look.
+You can hand it the colors you have and it will tell you which ones hold up and which two look most alike.
+Or describe the colors you want ("a blue, at least 5.5:1, this far from the orange" which is definitely a normal person request) and it'll search for the most colorful set that meets every target.
 
-Every check is taken for three observers by default: normal color vision, protan and deutan, with the worst of the three deciding.
-It speaks JSON, so anything that can start a process can use it.
+Every check is taken for three observers by default: normal color vision, protan and deutan, and it lets with worst one decide.
+It speaks JSON so it interops with whatever language you want.
 
 ## You'll Need
 
 [SBCL](https://www.sbcl.org/), and nothing else.
+Ha! Super slim.
 The executable it builds doesn't even need that.
 
 ## Building
@@ -20,7 +24,7 @@ The executable it builds doesn't even need that.
 ./build.lisp
 ```
 
-That writes `bin/beholder`, one file you can copy anywhere.
+That writes `bin/beholder`, one file you can copy anywhere. Ha!
 
 ## Using It
 
@@ -31,7 +35,8 @@ echo '{"background": "#f2e9d8", "colors": {"text": "#2f2b25", "link": "#e0443a"}
 
 The response gives each color's contrast for every observer, its chroma and lightness, whether it passed, and the pair that looks most alike.
 Here the link fails: 3.4:1 for normal vision, and 3.0:1 for a deutan.
-The exit code is 0 when everything passes, 1 when something doesn't, and 2 when the request itself is bad, so a pre-commit hook needs nothing but the exit code.
+The exit code is 0 when everything passes, 1 when something doesn't, and 2 when the request itself is malformed.
+A pre-commit hook needs nothing but the exit code.
 
 `bin/beholder solve` takes slots (a hue band and a contrast floor for each color you want) and targets, and returns the palette it found.
 
@@ -52,11 +57,12 @@ It renders when opened straight from the file system.
 ```
 
 fiveam comes from Quicklisp and is only needed for the tests.
+If you're not a Lisp person, this is the default.
 
 ## Gotcha!
 
-A red can clear 4.5:1 and still be hard to read.
-WCAG's contrast formula weighs red, green and blue the way normal color vision does, and a protan sees red as much darker than that.
+A red can clear 4.5:1 and still be hard to read!
+WCAG's contrast formula weighs red, green and blue the way normal color vision does, and a protan, like me, sees red as much darker than that.
 So beholder checks contrast for each observer and keeps the lowest.
 Check only normal vision and you can ship an unreadable red with a passing number next to it.
 
