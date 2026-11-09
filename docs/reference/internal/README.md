@@ -12,4 +12,4 @@ Other material written here about how the system works (guides, explainers, walk
 
 | File | Shows |
 |---|---|
-| | |
+| [`usage.md`](usage.md) | The two commands, every request field and default, the responses and exit codes, how the solver decides, the Lisp API, tests and scripts |

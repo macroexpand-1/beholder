@@ -1,0 +1,23 @@
+{
+  "background": "#33362f",
+  "slots": {
+    "blue": { "hues": [205, 224], "floor": 5.5, "max_saturation": 0.90, "min_chroma": 40 },
+    "warm": { "hues": [8, 26],    "floor": 4.6, "max_saturation": 1.00, "min_chroma": 44 },
+    "gold": { "hues": [34, 50],   "floor": 4.6, "max_saturation": 1.00, "min_chroma": 44 },
+    "teal": { "hues": [188, 204], "floor": 4.6, "max_saturation": 1.00, "min_chroma": 20 }
+  },
+  "fixed": { "fg": "#dbded8", "comment": "#9e9e9e" },
+  "targets": {
+    "default": 16,
+    "pairs": [
+      { "roles": ["blue", "warm"], "de": 40 },
+      { "roles": ["blue", "gold"], "de": 30 },
+      { "roles": ["gold", "warm"], "de": 14 },
+      { "roles": ["teal", "warm"], "de": 30 },
+      { "roles": ["teal", "gold"], "de": 20 },
+      { "roles": ["teal", "blue"], "de": 14 }
+    ]
+  },
+  "ceiling": 9.04,
+  "search": { "lightness": [0.40, 0.92], "restarts": 40 }
+}

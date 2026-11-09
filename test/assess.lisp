@@ -53,7 +53,7 @@
       (is (= 1 (length (report-short-pairs report))))
       (is (not (report-passed-p report))))))
 
-(test report-plist-carries-the-hexes
-  (let ((plist (report-plist (assess *paper* (list (cons "fg" (hex "#2f2b25")))))))
-    (is (string= "#f2e9d8" (getf plist :background)))
-    (is (string= "#2f2b25" (getf (first (getf plist :roles)) :hex)))))
+(test report-json-carries-the-hexes
+  (let ((json (report-json (assess *paper* (list (cons "fg" (hex "#2f2b25")))))))
+    (is (string= "#f2e9d8" (field json "background")))
+    (is (string= "#2f2b25" (field (field (field json "colors") "fg") "hex")))))

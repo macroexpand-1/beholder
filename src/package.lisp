@@ -22,7 +22,7 @@
    #:measure-passes-floor-p #:measure-under-ceiling-p #:measure-passed-p
    #:report #:report-background #:report-measures #:report-weakest-pair
    #:report-weakest-de #:report-short-pairs #:report-failures
-   #:report-passed-p #:report-plist
+   #:report-passed-p
    #:assess
 
    ;; Finding a palette (solve.lisp)
@@ -36,4 +36,13 @@
    #:result #:result-palette #:result-feasibility #:result-mean-chroma
    #:result-weakest-pair #:result-weakest-de
    #:infeasible-slot #:infeasible-slot-slot #:infeasible-slot-constraint
-   #:solve))
+   #:solve
+
+   ;; Requests and results as JSON (json.lisp)
+   #:bad-request #:bad-request-message
+   #:parse-json #:json-text #:json-object #:json-object-p #:field
+   #:read-assess-request #:read-solve-request
+   #:report-json #:result-json
+
+   ;; The command (main.lisp)
+   #:respond #:main))

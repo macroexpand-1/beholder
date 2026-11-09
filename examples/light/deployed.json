@@ -1,0 +1,27 @@
+{
+  "background": "#f2e9d8",
+  "colors": {
+    "fg":                "#2f2b25",
+    "comment":           "#6b6862",
+    "syn:keyword":       "#8620d9",
+    "syn:string":        "#b33204",
+    "syn:function":      "#1b25e3",
+    "syn:type":          "#a7037b",
+    "syn:constant":      "#780404",
+    "syn:builtin":       "#045b80",
+    "git:added":         "#0e4ad8",
+    "git:removed":       "#b11902",
+    "prompt:dir":        "#0e4ad8",
+    "prompt:branch":     "#925401",
+    "prompt:alert":      "#880a01",
+    "prompt:ok":         "#0165a7",
+    "tig:add(blue)":     "#123b65",
+    "tig:tag(yellow)":   "#45290c",
+    "tig:remote(red)":   "#af340b",
+    "tig:id(cyan)":      "#083a50",
+    "tig:date(magenta)": "#714983",
+    "tig:author(green)": "#31574c",
+    "tig:dim(color8)":   "#726449"
+  },
+  "policy": { "floor": 4.5 }
+}

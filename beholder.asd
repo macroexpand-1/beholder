@@ -11,7 +11,9 @@ colorful set that meets your targets. No dependencies."
                 :components ((:file "package")
                              (:file "color")
                              (:file "assess")
-                             (:file "solve"))))
+                             (:file "solve")
+                             (:file "json")
+                             (:file "main"))))
   :in-order-to ((test-op (test-op "beholder/tests"))))
 
 (defsystem "beholder/tests"
@@ -22,7 +24,8 @@ colorful set that meets your targets. No dependencies."
                 :components ((:file "package")
                              (:file "color")
                              (:file "assess")
-                             (:file "solve"))))
+                             (:file "solve")
+                             (:file "json"))))
   :perform (test-op (o c)
                     (declare (ignore o c))
                     (unless (uiop:symbol-call :fiveam :run!

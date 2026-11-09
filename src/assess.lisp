@@ -154,26 +154,4 @@ counts as passing; by default that's a contrast of at least 4.5 and nothing else
                    :short-pairs (short-pairs entries policy)
                    :failures (count-if-not #'measure-passed-p measures)))))
 
-;;; The same report as plain lists, strings and numbers, ready to turn into
-;;; JSON for other languages.
-
-(defun measure-plist (measure)
-  (list :role           (measure-role measure)
-        :hex            (color-hex (measure-color measure))
-        :contrasts      (measure-contrasts measure)
-        :worst-contrast (measure-worst-contrast measure)
-        :chroma         (measure-chroma measure)
-        :lstar          (measure-lstar measure)
-        :passed         (measure-passed-p measure)))
-
-(defun short-pair-plist (short-pair)
-  (destructuring-bind (role-a role-b distance required-de) short-pair
-    (list :roles (list role-a role-b) :de distance :required required-de)))
-
-(defun report-plist (report)
-  (list :background   (color-hex (report-background report))
-        :passed       (report-passed-p report)
-        :roles        (mapcar #'measure-plist (report-measures report))
-        :weakest-pair (list :roles (report-weakest-pair report)
-                            :de    (report-weakest-de report))
-        :short-pairs  (mapcar #'short-pair-plist (report-short-pairs report))))
+;;; REPORT-JSON in json.lisp gives the same report as JSON for other languages.

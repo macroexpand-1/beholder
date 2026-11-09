@@ -1,0 +1,25 @@
+{
+  "background": "#f2e9d8",
+  "slots": {
+    "keyword":  { "hues": [272, 322], "floor": 5.0, "max_saturation": 0.78, "min_chroma": 46 },
+    "string":   { "hues": [100, 165], "floor": 5.0, "max_saturation": 0.98, "min_chroma": 44 },
+    "function": { "hues": [200, 238], "floor": 5.5, "max_saturation": 0.80, "min_chroma": 44 },
+    "type":     { "hues": [28, 58],   "floor": 5.0, "max_saturation": 0.98, "min_chroma": 40 },
+    "constant": { "hues": [0, 24],    "floor": 5.0, "max_saturation": 0.98, "min_chroma": 44 },
+    "builtin":  { "hues": [172, 198], "floor": 5.5, "max_saturation": 0.95, "min_chroma": 18 }
+  },
+  "fixed": { "fg": "#2f2b25", "comment": "#6b6862" },
+  "targets": {
+    "default": 16,
+    "pairs": [
+      { "roles": ["keyword", "string"],   "de": 22 },
+      { "roles": ["keyword", "function"], "de": 16 },
+      { "roles": ["keyword", "constant"], "de": 20 },
+      { "roles": ["string", "function"],  "de": 20 },
+      { "roles": ["string", "constant"],  "de": 20 },
+      { "roles": ["string", "type"],      "de": 18 },
+      { "roles": ["comment", "string"],   "de": 14 }
+    ]
+  },
+  "search": { "lightness": [0.13, 0.58], "restarts": 8 }
+}

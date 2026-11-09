@@ -442,24 +442,24 @@ All values verified for normal, protanope and deuteranope observers.</p>
 
 <p>String and type were re-tuned by eye on 2026-11-01, away from the solver's
 green (<code>#036831</code>) and olive (<code>#696406</code>); see
-<code>color/README.md</code>. Weakest syntax pair as deployed:
+<code>examples/README.md</code>. Weakest syntax pair as deployed:
 <code>keyword</code>/<code>function</code> at 16.2 &Delta;E for the worst
-observer, which is the target <code>solve-palette.lisp syntax</code> now uses
+observer, which is the target <code>examples/light/syntax.json</code> now uses
 for that pair. <code>git added</code> vs <code>removed</code>: 120.9 &Delta;E; blue
 against warm rides the intact axis, so that pair survives completely.</p>
 
 <h2>9. Regenerating</h2>
 
-<pre><code>./color/solve-palette.lisp verify   # re-measure everything deployed
-./color/solve-palette.lisp syntax   # doom/config.el font-lock faces
-./color/solve-palette.lisp prompt   # starship [palettes.paper]
-./color/solve-palette.lisp diff     # git [color "diff"]
+<pre><code>bin/beholder assess examples/light/deployed.json   # re-measure everything deployed
+bin/beholder solve  examples/light/syntax.json     # editor font-lock faces
+bin/beholder solve  examples/light/prompt.json     # shell prompt
+bin/beholder solve  examples/light/diff.json       # git diff colors
 
-./color/pupil.lisp                  # pupil size and retinal blur per field
-./color/lca.lisp                    # chromatic aberration per wavelength
-./color/tradeoff.lisp               # chroma available per background</code></pre>
+./pupil.lisp                                      # pupil size and retinal blur per field
+./lca.lisp                                        # chromatic aberration per wavelength
+./tradeoff.lisp                                   # chroma available per background</code></pre>
 
-<p>Run <code>verify</code> after any palette edit; it exits non-zero if
+<p>Re-measure after any palette edit; <code>assess</code> exits non-zero if
 anything falls below AA for any of the three observers. The constraints
 interact, so nudging one hex by hand tends to break a pair somewhere else;
 change the constraints and re-solve instead.</p>

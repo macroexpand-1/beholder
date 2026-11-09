@@ -1,0 +1,23 @@
+{
+  "background": "#33362f",
+  "slots": {
+    "red":     { "hues": [0, 24],    "floor": 4.6, "max_saturation": 1.00, "min_chroma": 40 },
+    "green":   { "hues": [150, 180], "floor": 4.6, "max_saturation": 1.00, "min_chroma": 50 },
+    "yellow":  { "hues": [34, 58],   "floor": 4.6, "max_saturation": 1.00, "min_chroma": 40 },
+    "blue":    { "hues": [210, 235], "floor": 5.1, "max_saturation": 1.00, "min_chroma": 40 },
+    "magenta": { "hues": [270, 320], "floor": 4.6, "max_saturation": 1.00, "min_chroma": 65 },
+    "cyan":    { "hues": [185, 205], "floor": 4.6, "max_saturation": 1.00, "min_chroma": 25 }
+  },
+  "fixed": { "fg": "#dbded8", "comment": "#9e9e9e" },
+  "targets": {
+    "default": 14,
+    "pairs": [
+      { "roles": ["red", "green"],    "de": 36 },
+      { "roles": ["blue", "magenta"], "de": 18 },
+      { "roles": ["red", "yellow"],   "de": 18 },
+      { "roles": ["blue", "cyan"],    "de": 16 }
+    ]
+  },
+  "ceiling": 9.04,
+  "search": { "lightness": [0.40, 0.92], "restarts": 40 }
+}

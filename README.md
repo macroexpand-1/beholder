@@ -1,86 +1,65 @@
-# color/
+# beholder
 
-Both themes in this repo, light and dark, are **solved, not chosen**.
-This directory holds the solver, the supporting optics calculations, and the write-up explaining why the palette looks the way it does.
-The write-up covers the light theme; `theme/README.md` covers what dark does differently.
+Check a color palette, or have one found for you.
 
-Nothing here is symlinked or sourced at runtime: it is tooling and documentation.
-The palettes themselves are pinned as literal hex in `theme/light/` and `theme/dark/` (Ghostty and git), `doom/config.el` and `starship/starship.toml`.
+beholder measures contrast, how colorful each color is, and how far apart colors look.
+Hand it the colors you have and it tells you which ones hold up and which two look most alike.
+Or describe the colors you want ("a blue, at least 5.5:1, this far from the orange") and it searches for the most colorful set that meets every target.
 
-`tig/tigrc` and `zsh/.zshrc` pin **no** hex.
-tig rejects `#rrggbb` and ignores palette indices 16-255, and `LSCOLORS` takes only letters, so both name ANSI slots 0-15, i.e. the Ghostty slot hexes reused as foregrounds.
-Those slots are the theme, so neither needs separate light/dark tuning; `verify` still measures each tig role (the `tig:*` rows) so a palette edit that darkens a slot can't push a tig color below AA unnoticed.
+Every check is taken for three observers by default: normal color vision, protan and deutan, with the worst of the three deciding.
+It speaks JSON, so anything that can start a process can use it.
 
-The web house sheets (`web/house-light.css`) are not solved here: their accents were re-solved against `#f4efe3` separately, and nothing in this directory measures them.
+## You'll Need
 
-## Start Here
+[SBCL](https://www.sbcl.org/), and nothing else.
+The executable it builds doesn't even need that.
 
-**[writeup.html](writeup.html)** is the full reasoning.
-It is self-contained (the house stylesheet is embedded, so it renders correctly when opened from Finder).
-It covers why light mode is an optics result rather than a preference, why the background is warm and not white, the red/green constraint, and the contrast-versus-colorfulness tradeoff that drove the final design.
+## Building
 
-## Scripts
+```sh
+./build.lisp
+```
 
-| Script | What It Does |
-|---|---|
-| `solve-palette.lisp verify` | Re-measure every deployed color in both themes, read from the config files themselves (each theme's `:sources` in `*themes*` says where each lives). Exits non-zero if anything falls below AA for any of the three observers, or if a source line has gone missing. `githooks/pre-commit` runs it whenever a palette file is staged. `verify dark` measures one theme. |
-| `solve-palette.lisp syntax [dark]` | Re-solve the `doom/config.el` font-lock faces for that theme's face block. |
-| `solve-palette.lisp prompt [dark]` | Re-solve `starship/starship.toml`'s `[palettes.paper]` (or `[palettes.sage]`). |
-| `solve-palette.lisp diff [dark]` | Re-solve `theme/light/gitconfig`'s (or `theme/dark/gitconfig`'s) diff colors. |
-| `solve-palette.lisp ansi dark` | Re-solve Ghostty's ANSI slots 1-6 in `theme/dark/ghostty`. The light slots predate this mode and were solved separately. |
-| `pupil.lisp` | Pupil diameter and retinal blur per background luminance. |
-| `lca.lisp` | Longitudinal chromatic aberration per wavelength. |
-| `tradeoff.lisp` | Maximum chroma a background can carry at a given contrast floor. |
+That writes `bin/beholder`, one file you can copy anywhere.
 
-Common Lisp, no dependencies beyond SBCL (already in the `Brewfile`); each script carries a `#!/usr/bin/env -S sbcl --script` shebang and runs in place.
-`solve-palette.lisp` and `tradeoff.lisp` load the `beholder` system (`beholder.asd`) with the ASDF that ships in SBCL.
+## Using It
 
-## The Library
+```sh
+echo '{"background": "#f2e9d8", "colors": {"text": "#2f2b25", "link": "#e0443a"}}' \
+  | bin/beholder assess
+```
 
-The scripts are thin drivers over three layers in `src/`, each taking values and returning values, with no printing and no exiting:
+The response gives each color's contrast for every observer, its chroma and lightness, whether it passed, and the pair that looks most alike.
+Here the link fails: 3.4:1 for normal vision, and 3.0:1 for a deutan.
+The exit code is 0 when everything passes, 1 when something doesn't, and 2 when the request itself is bad, so a pre-commit hook needs nothing but the exit code.
 
-| File | Layer |
-|---|---|
-| `src/color.lisp` | The `color` value (`hex`, `hsl`, `color-hex`), WCAG contrast, CIELAB, chroma, and the observers (`+normal+`, `+protan+`, `+deutan+`, from the Viénot/Brettel/Mollon dichromat simulation) that `worst-contrast`, `profile` and `separation` take as `:observers`. |
-| `src/assess.lisp` | `assess`: a background, named colors and a `policy` in, a `report` out (contrast per observer, chroma, L\*, the weakest pair, any pairs short of their targets). |
-| `src/solve.lisp` | `solve`: a `problem` (background, slots, fixed colors, targets, ceiling, grid, restarts) in, a `result` out. A slot with no candidate signals `infeasible-slot`, naming the constraint that emptied it. |
+`bin/beholder solve` takes slots (a hue band and a contrast floor for each color you want) and targets, and returns the palette it found.
 
-The tests use fiveam (from Quicklisp) and run with `(asdf:test-system "beholder")`; the library itself needs nothing beyond SBCL.
+Everything else (every request field and its default, the responses, exit codes, how the solver decides, the Lisp API, the tests) is in [the usage reference](docs/reference/internal/usage.md).
+[`examples/`](examples/) has a light and a dark theme as the requests that produced them, with the reasoning behind each choice.
 
-## Two Things That Are Easy to Get Wrong
+## The Write-Up
 
-**Contrast must be checked per observer.**
-WCAG's luminance coefficients encode a *normal* observer's luminous efficiency, so a saturated red that measures 4.5:1 reads noticeably darker to a protanope.
-`worst-contrast` takes the minimum across normal, protan and deutan simulation.
-Checking only the default observer is the single most common way to ship an inaccessible red.
+[writeup.html](writeup.html) is why the light example looks the way it does: why light mode is an optics result rather than a preference, why the background is warm and not white, the red/green constraint, and the contrast-versus-colorfulness tradeoff.
+It renders when opened straight from the file system.
+`tradeoff.lisp`, `pupil.lisp` and `lca.lisp` are the calculations behind it.
 
-**The two solving modes are not interchangeable.**
-Body text and syntax are solved for *contrast*; the prompt, diffs and status text are solved for *chroma subject to a contrast floor*.
-On a light background these genuinely conflict (sRGB's most chromatic colors sit at middle lightness), so contrast above what a surface needs is paid for in colorfulness.
-The first version of this theme maximized contrast everywhere (syntax keywords at 11.06:1 against a 4.5 requirement) and looked dead as a result.
+## Tests
 
-## Regenerating
+```lisp
+(ql:quickload "fiveam")
+(asdf:test-system "beholder")
+```
 
-The solver is a search, not a closed form, so its output can land away from what is pinned in the configs.
-Treat the configs as authoritative and the solver as the thing you re-run when a *constraint* changes: a new background, a different floor, an added syntax category.
+fiveam comes from Quicklisp and is only needed for the tests.
 
-Do not hand-edit a single hex to taste.
-The constraints interact: every color is scored against every other one for worst-observer separation, so nudging one value tends to break a pair somewhere else.
-Change the constraint and re-solve.
+## Gotcha!
 
-## Hand-Tuned Exceptions
+A red can clear 4.5:1 and still be hard to read.
+WCAG's contrast formula weighs red, green and blue the way normal color vision does, and a protan sees red as much darker than that.
+So beholder checks contrast for each observer and keeps the lowest.
+Check only normal vision and you can ship an unreadable red with a passing number next to it.
 
-Two syntax colors in `doom/config.el` are tuned by hand, not solved, and that is deliberate.
-Running `solve-palette.lisp syntax` will not reproduce them: its string band is still green and its type band still olive.
-Do not "fix" the configs back to the solver's output.
+## License
 
-| Face | Solved | Deployed | Why |
-|---|---|---|---|
-| `font-lock-string-face` | `#036831` green | `#b33204` orange, 4.54:1 | The green was disliked, and in practice ran together with nearby colors |
-| `font-lock-type-face`, `font-lock-preprocessor-face` | `#696406` olive | `#a7037b` magenta, 5.17:1 | Too drab to pick out at a glance |
-
-Chosen on 2026-11-01 by eye in Emacs, with each candidate measured against the other syntax colors held fixed.
-Orange string vs magenta type is 74.4 dE for the worst observer, and every pair still clears 16 (closest touching either new color: magenta vs builtin teal, 17.7).
-The orange is the lightest that clears AA and sits under the solver's 5.0 floor on purpose; the darker `#a53302` (5.05:1) was tried and read too dark.
-Which hue went on which face was also a judgment of how much of each color lands on the page, not a separation result: the swap is separation-neutral.
-`verify` measures the two deployed hexes, not the solver's green and olive.
+BSD-2-Clause. See [LICENSE](LICENSE).

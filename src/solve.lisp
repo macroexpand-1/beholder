@@ -108,14 +108,18 @@ knocked them all out: :FLOOR, :CEILING or :CHROMA-MIN.")
         collect lightness))
 
 (defun slot-grid (slot grid)
-  "Every color this slot tries: each hue, at each saturation, at each lightness."
+  "Every color this slot tries: each hue, at each saturation, at each lightness.
+Each is rounded to its nearest hex code, since the hex is what you'd actually
+use. That way the search judges exactly the colors it hands back, and a
+target it meets stays met."
   (let ((saturations (slot-saturations slot grid))
         (lightnesses (grid-lightnesses grid))
         (points      '()))
     (dolist (hue (slot-hues slot grid))
       (dolist (saturation saturations)
         (dolist (lightness lightnesses)
-          (push (hsl hue saturation lightness) points))))
+          (let ((exact (hsl hue saturation lightness)))
+            (push (hex (color-hex exact)) points)))))
     (nreverse points)))
 
 (defun candidates-for-slot (problem slot)
@@ -316,12 +320,11 @@ starting guesses and keeps the best. Returns a RESULT."
         (when (> final-score best-score)
           (setf best-score      final-score
                 best-assignment assignment))))
-    ;; Round each color to its hex, since the hex is what you'd actually use.
-    ;; Everything in the result is measured on the rounded color.
+    ;; The candidates are already hex codes (see SLOT-GRID), so these numbers
+    ;; describe exactly the colors handed back.
     (let ((palette (loop for slot-index below (compiled-size compiled)
                          for role = (svref (compiled-names compiled) slot-index)
-                         for pick = (choice-color compiled best-assignment slot-index)
-                         collect (cons role (hex (color-hex pick))))))
+                         collect (cons role (choice-color compiled best-assignment slot-index)))))
       (multiple-value-bind (closest-pair closest-de)
           (weakest-pair (append palette (problem-fixed problem))
                         :observers (problem-observers problem))
